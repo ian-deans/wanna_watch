@@ -1,18 +1,81 @@
-import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import * as  React from 'react';
+import { ScrollView, StyleSheet, TouchableNativeFeedback } from 'react-native';
+import {
+  Body,
+  H2,
+  Left,
+  List,
+  ListItem,
+  Right,
+  Text,
+  Thumbnail,
+  View,
+} from "native-base";
+import { Store } from '../Store';
+import { SearchBox } from "../components";
+import { loadModal, closeModal, searchPrograms } from '../actions';
+// import './App.css';
+const Modal = React.lazy<any>(() => import("../components/Modal"));
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
 
-export default function TabTwoScreen() {
+
+export default function App(): JSX.Element {
+  const { state, dispatch } = React.useContext(Store);
+
+  const handlePress = () => {
+    if (state.modalOpen) {
+      closeModal(dispatch);
+    }
+  }
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabTwoScreen.tsx" />
-    </View>
+    <TouchableNativeFeedback onPress={handlePress}>
+      <View style={{ zIndex: 500 }}>
+        {/* {
+          state.error
+            ? <Subtitle >{state.error}</Subtitle>
+            : null
+        } */}
+
+        <SearchBox />
+        <ScrollView>
+          <List>
+            {state.results.map((r: any, i: number) => {
+              return (
+                <ListItem
+                  key={i}
+                  onPress={() => loadModal(r.imdbID, r.Title, dispatch, state)}
+                  thumbnail
+                >
+                  <Left>
+                    <Thumbnail square source={{ uri: r.Poster }} />
+                  </Left>
+                  <Body>
+                    <Text>{r.Title}</Text>
+                    <Text note>{r.Plot}</Text>
+                  </Body>
+                  <Right>
+                    <Text note>{r.Released}</Text>
+                  </Right>
+                </ListItem>
+              )
+            })}
+          </List>
+        </ScrollView>
+
+
+        {
+          state.modalOpen
+            ? <React.Suspense fallback={<H2>Loading...</H2>}>
+              <Modal />
+            </React.Suspense>
+            : null
+        }
+      </View>
+    </TouchableNativeFeedback >
   );
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
