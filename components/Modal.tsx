@@ -48,88 +48,54 @@ export default function Modal(): JSX.Element {
 
   const isSaved = savedItems.find((p: IProgram) => p.imdbID === imdbID);
   const buttonProps = isSaved
-    ? { color: 'danger', text: 'Remove', clickFn: removeSavedItem }
-    : { color: 'success', text: 'Save', clickFn: saveItem }
+    ? { danger: true, text: 'Remove', clickFn: removeSavedItem }
+    : { success: true, text: 'Save', clickFn: saveItem }
 
 
-    const backAction = () => {
-      console.log("BACK")
-      // Alert.alert("Hold on!", "Are you sure you want to go back?", [
-      //   {
-      //     text: "Cancel",
-      //     onPress: () => null,
-      //     style: "cancel"
-      //   },
-      //   { text: "YES", onPress: () => BackHandler.exitApp() }
-      // ]);
-      closeModal(dispatch);
-      return true;
-    };
-  
-    React.useEffect(() => {
-      BackHandler.addEventListener("hardwareBackPress", backAction);
-  
-      return () =>
-        BackHandler.removeEventListener("hardwareBackPress", backAction);
-    }, []);
+  const backAction = () => {
+    console.log("BACK")
+    closeModal(dispatch);
+    return true;
+  };
 
-  // React.useEffect(() => {
-  //   const backAction = () => {
-  //     // Alert.alert("Hold on!", "Are you sure you want to go back?", [
-  //     //   {
-  //     //     text: "Cancel",
-  //     //     onPress: () => null,
-  //     //     style: "cancel"
-  //     //   },
-  //     //   { text: "YES", onPress: () => BackHandler.exitApp() }
-  //     // ]);
-  //     closeModal(dispatch);
-  //     return true;
-  //   };
+  React.useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", backAction);
 
-  //   const backHandler = BackHandler.addEventListener(
-  //     "hardwareBackPress",
-  //     backAction
-  //   );
-
-  //   return () => backHandler.remove();
-  // }, []);
-
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+  }, []);
 
   return (
     <NBModal
       animationType="slide"
       visible={modalOpen}
     >
-
-      {/* <View style={{ */}
-      {/* // position: 'fixed',
-
-      // display: 'flex',
-      // alignItems: 'center',
-      // justifyContent: 'center',
-
-      // zIndex: 100,
-      // top: '50px',
-
-      // minHeight: '50vh',
-      // width: '80vw'
-      //  background-color: var(--main-bg-color),
-      // boxShadow: 'black 8px 15px 20px 7px' */}
-      {/* }} > */}
-      <Header>
+      <Header style={{
+        display: 'flex',
+        width: "100%",
+      }}>
         <Left>
           <Button onPress={() => closeModal(dispatch)} transparent>
             <Icon type="FontAwesome" name="arrow-left" />
           </Button>
         </Left>
+        <Right>
+          <Button
+            success={buttonProps.success}
+            danger={buttonProps.danger}
+            onPress={() => buttonProps.clickFn(modalData)}
+          >
+            <Text>
+              {buttonProps.text}
+            </Text>
+          </Button>
+        </Right>
       </Header>
       <ScrollView>
 
         <Card>
           <CardItem>
             <Left>
-              {/* <Thumbnail source={} /> */}
               <Body>
                 <H2>{Title}</H2>
                 <Text>{Genre}</Text>
@@ -187,15 +153,7 @@ export default function Modal(): JSX.Element {
             IMDB
                 </Text>
         </Button>
-        <Button
-          color={buttonProps.color}
-          onPress={() => buttonProps.clickFn(modalData)}
-        >
-          <Text>
 
-            {buttonProps.text}
-          </Text>
-        </Button>
         
       </View>
       <Button onPress={() => closeModal(dispatch)}><Text>Back</Text></Button>

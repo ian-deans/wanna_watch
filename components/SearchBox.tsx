@@ -1,6 +1,7 @@
 import React from 'react';
 import { Store } from '../Store';
 import { searchPrograms } from "../actions";
+import { TextInput, Keyboard } from "react-native";
 import { Button, Container, Header, Icon, Input, Item, Form, View, Text } from "native-base";
 // import './SearchBox.css';
 
@@ -14,13 +15,14 @@ export default function SearchBox(): JSX.Element {
 
   const handleSubmit = (): void => {
     searchPrograms(term, dispatch);
+    Keyboard.dismiss();
   }
 
   return (
     <Header searchBar rounded>
       <Item>
         <Icon name="ios-search" style={{ width: "25%" }} />
-        <Input placeholder="Search" autoFocus={true} onChange={updateTerm} />
+        <Input onSubmitEditing={handleSubmit} placeholder="Search" autoFocus={true} onChange={updateTerm} />
       </Item>
       <Item>
 
